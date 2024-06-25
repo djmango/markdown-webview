@@ -112,9 +112,15 @@ import WebKit
                     print("Failed to load resources.")
                     return
                 }
+
+                // Append custom styles
+                let stylesheet: String? = self.parent.customStylesheet.map { str in
+                    defaultStylesheet + str
+                }
+
                 let htmlString = templateString
                     .replacingOccurrences(of: "PLACEHOLDER_SCRIPT", with: script)
-                    .replacingOccurrences(of: "PLACEHOLDER_STYLESHEET", with: self.parent.customStylesheet ?? defaultStylesheet)
+                    .replacingOccurrences(of: "PLACEHOLDER_STYLESHEET", with: stylesheet ?? defaultStylesheet)
                 platformView.loadHTMLString(htmlString, baseURL: nil)
             }
 
