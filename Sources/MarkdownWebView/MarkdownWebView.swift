@@ -60,9 +60,13 @@ import WebKit
             let parent: MarkdownWebView
             let platformView: CustomWebView
             var startTime: CFAbsoluteTime?
+            var loadStartTime: CFAbsoluteTime?
+            var renderStartTime: CFAbsoluteTime?
+            var javascriptExecutionTime: CFAbsoluteTime = 0
 
             init(parent: MarkdownWebView) {
                 startTime = CFAbsoluteTimeGetCurrent()
+                loadStartTime = CFAbsoluteTimeGetCurrent()
                 self.parent = parent
                 platformView = .init()
                 super.init()
@@ -96,6 +100,7 @@ import WebKit
                 platformView.configuration.userContentController.add(self, name: "sizeChangeHandler")
                 platformView.configuration.userContentController.add(self, name: "renderedContentHandler")
                 platformView.configuration.userContentController.add(self, name: "copyToPasteboard")
+                platformView.configuration.userContentController.add(self, name: "javascriptExecutionTime")
 
                 #if os(macOS)
                     let defaultStylesheetFileName = "default-macOS"
@@ -107,19 +112,60 @@ import WebKit
                       let scriptFileURL = Bundle.module.url(forResource: "script", withExtension: ""),
                       let script = try? String(contentsOf: scriptFileURL),
                       let defaultStylesheetFileURL = Bundle.module.url(forResource: defaultStylesheetFileName, withExtension: ""),
-                      let defaultStylesheet = try? String(contentsOf: defaultStylesheetFileURL)
+                      let defaultStylesheet = try? String(contentsOf: defaultStylesheetFileURL),
+                      let markdownCSSURL = Bundle.module.url(forResource: "styles_markdown", withExtension: ""),
+                      let markdownCSS = try? String(contentsOf: markdownCSSURL)
+                // let katexCSSURL = Bundle.module.url(forResource: "katex.min", withExtension: "css", subdirectory: "css"),
+                // let katexCSS = try? String(contentsOf: katexCSSURL),
+                // let texmathCSSURL = Bundle.module.url(forResource: "texmath.min", withExtension: "css", subdirectory: "css"),
+                // let texmathCSS = try? String(contentsOf: texmathCSSURL),
+                // let katexJSURL = Bundle.module.url(forResource: "katex.min", withExtension: "js", subdirectory: "js"),
+                // let katexJS = try? String(contentsOf: katexJSURL),
+                // let texmathJSURL = Bundle.module.url(forResource: "texmath.min", withExtension: "js", subdirectory: "js"),
+                // let texmathJS = try? String(contentsOf: texmathJSURL),
+                // let morphdomJSURL = Bundle.module.url(forResource: "morphdom.min", withExtension: "js", subdirectory: "js"),
+                // let morphdomJS = try? String(contentsOf: morphdomJSURL),
+                // let clipboardJSURL = Bundle.module.url(forResource: "clipboard.min", withExtension: "js", subdirectory: "js"),
+                // let clipboardJS = try? String(contentsOf: clipboardJSURL),
+                // let markdownItSubJSURL = Bundle.module.url(forResource: "markdown-it-sub.min", withExtension: "js", subdirectory: "js"),
+                // let markdownItSubJS = try? String(contentsOf: markdownItSubJSURL),
+                // let markdownItSupJSURL = Bundle.module.url(forResource: "markdown-it-sup.min", withExtension: "js", subdirectory: "js"),
+                // let markdownItSupJS = try? String(contentsOf: markdownItSupJSURL),
+                // let markdownItFootnoteJSURL = Bundle.module.url(forResource: "markdown-it-footnote.min", withExtension: "js", subdirectory: "js"),
+                // let markdownItFootnoteJS = try? String(contentsOf: markdownItFootnoteJSURL)
                 else {
                     print("Failed to load resources.")
                     return
                 }
+
                 let htmlString = templateString
                     .replacingOccurrences(of: "PLACEHOLDER_SCRIPT", with: script)
                     .replacingOccurrences(of: "PLACEHOLDER_STYLESHEET", with: self.parent.customStylesheet ?? defaultStylesheet)
+                    .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_CSS", with: markdownCSS)
+                // .replacingOccurrences(of: "PLACEHOLDER_KATEX_CSS", with: "<style>\(katexCSS)</style>")
+                // .replacingOccurrences(of: "PLACEHOLDER_TEXMATH_CSS", with: "<style>\(texmathCSS)</style>")
+                // .replacingOccurrences(of: "PLACEHOLDER_KATEX_JS", with: "<script>\(katexJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_TEXMATH_JS", with: "<script>\(texmathJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_MORPHDOM_JS", with: "<script>\(morphdomJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_CLIPBOARD_JS", with: "<script>\(clipboardJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_SUB_JS", with: "<script>\(markdownItSubJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_SUP_JS", with: "<script>\(markdownItSupJS)</script>")
+                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_FOOTNOTE_JS", with: "<script>\(markdownItFootnoteJS)</script>")
+
                 platformView.loadHTMLString(htmlString, baseURL: nil)
+            }
+
+            public func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
+                loadStartTime = CFAbsoluteTimeGetCurrent()
             }
 
             /// Update the content on first finishing loading.
             public func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
+                let loadEndTime = CFAbsoluteTimeGetCurrent()
+                if let loadStartTime = loadStartTime {
+                    let loadTime = loadEndTime - loadStartTime
+                    print("WebView load time: \(loadTime) seconds")
+                }
                 (webView as! CustomWebView).updateMarkdownContent(parent.markdownContent)
             }
 
@@ -166,6 +212,11 @@ import WebKit
                           let renderedContent = String(data: renderedContentBase64EncodedData, encoding: .utf8)
                     else { return }
                     renderedContentHandler(renderedContent)
+                case "javascriptExecutionTime":
+                    if let executionTime = message.body as? Double {
+                        javascriptExecutionTime = executionTime
+                        print("JavaScript execution time: \(executionTime) seconds")
+                    }
                 case "copyToPasteboard":
                     guard let base64EncodedString = message.body as? String else { return }
                     base64EncodedString.trimmingCharacters(in: .whitespacesAndNewlines).copyToPasteboard()
@@ -197,10 +248,23 @@ import WebKit
                 }
             #endif
 
+            // func updateMarkdownContent(_ markdownContent: String) {
+            //     guard let markdownContentBase64Encoded = markdownContent.data(using: .utf8)?.base64EncodedString() else { return }
+
+            //     callAsyncJavaScript("window.updateWithMarkdownContentBase64Encoded(`\(markdownContentBase64Encoded)`)", in: nil, in: .page, completionHandler: nil)
+            // }
             func updateMarkdownContent(_ markdownContent: String) {
                 guard let markdownContentBase64Encoded = markdownContent.data(using: .utf8)?.base64EncodedString() else { return }
 
-                callAsyncJavaScript("window.updateWithMarkdownContentBase64Encoded(`\(markdownContentBase64Encoded)`)", in: nil, in: .page, completionHandler: nil)
+                let script = """
+                    const start = performance.now();
+                    window.updateWithMarkdownContentBase64Encoded(`\(markdownContentBase64Encoded)`);
+                    const end = performance.now();
+                    const executionTime = (end - start) / 1000;
+                    window.webkit.messageHandlers.javascriptExecutionTime.postMessage(executionTime);
+                """
+
+                evaluateJavaScript(script, completionHandler: nil)
             }
 
             #if os(macOS)

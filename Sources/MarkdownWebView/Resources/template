@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script>PLACEHOLDER_SCRIPT</script>
     <style>
-        PLACEHOLDER_STYLESHEET
+        PLACEHOLDER_STYLESHEET PLACEHOLDER_MARKDOWN_CSS
     </style>
     <style>
         :root {
@@ -56,15 +56,27 @@
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/markdown-it-texmath@1.0.0/css/texmath.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/markdown-it-texmath@1.0.0/texmath.min.js"></script>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet"> -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/markdown-it-texmath@1.0.0/css/texmath.min.css" rel="stylesheet"> -->
+
     <script src="https://cdn.jsdelivr.net/npm/morphdom@2.6.1/dist/morphdom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it-texmath@1.0.0/texmath.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-sub@2.0.0/dist/markdown-it-sub.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-sup@2.0.0/dist/markdown-it-sup.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it-footnote@4.0.0/dist/markdown-it-footnote.min.js"></script>
+
+    <!-- <link rel="stylesheet" href="PLACEHOLDER_FONT_AWESOME_CSS"> -->
+    <!-- <link rel="stylesheet" href="PLACEHOLDER_KATEX_CSS"> -->
+    <!-- <link rel="stylesheet" href="PLACEHOLDER_TEXMATH_CSS"> -->
+    <!-- <script src="PLACEHOLDER_KATEX_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_TEXMATH_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_MORPHDOM_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_CLIPBOARD_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_MARKDOWN_IT_SUB_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_MARKDOWN_IT_SUP_JS"></script> -->
+    <!-- <script src="PLACEHOLDER_MARKDOWN_IT_FOOTNOTE_JS"></script> -->
     <script>
             // This script is injected into the web view to enable code blocks
             (function (window) {
