@@ -109,48 +109,24 @@ import WebKit
                 #endif
                 guard let templateFileURL = Bundle.module.url(forResource: "template", withExtension: ""),
                       let templateString = try? String(contentsOf: templateFileURL),
-                      let scriptFileURL = Bundle.module.url(forResource: "script", withExtension: ""),
+                      let scriptFileURL = Bundle.module.url(forResource: "script2", withExtension: ""),
                       let script = try? String(contentsOf: scriptFileURL),
                       let defaultStylesheetFileURL = Bundle.module.url(forResource: defaultStylesheetFileName, withExtension: ""),
                       let defaultStylesheet = try? String(contentsOf: defaultStylesheetFileURL),
                       let markdownCSSURL = Bundle.module.url(forResource: "styles_markdown", withExtension: ""),
                       let markdownCSS = try? String(contentsOf: markdownCSSURL)
-                // let katexCSSURL = Bundle.module.url(forResource: "katex.min", withExtension: "css", subdirectory: "css"),
-                // let katexCSS = try? String(contentsOf: katexCSSURL),
-                // let texmathCSSURL = Bundle.module.url(forResource: "texmath.min", withExtension: "css", subdirectory: "css"),
-                // let texmathCSS = try? String(contentsOf: texmathCSSURL),
-                // let katexJSURL = Bundle.module.url(forResource: "katex.min", withExtension: "js", subdirectory: "js"),
-                // let katexJS = try? String(contentsOf: katexJSURL),
-                // let texmathJSURL = Bundle.module.url(forResource: "texmath.min", withExtension: "js", subdirectory: "js"),
-                // let texmathJS = try? String(contentsOf: texmathJSURL),
-                // let morphdomJSURL = Bundle.module.url(forResource: "morphdom.min", withExtension: "js", subdirectory: "js"),
-                // let morphdomJS = try? String(contentsOf: morphdomJSURL),
-                // let clipboardJSURL = Bundle.module.url(forResource: "clipboard.min", withExtension: "js", subdirectory: "js"),
-                // let clipboardJS = try? String(contentsOf: clipboardJSURL),
-                // let markdownItSubJSURL = Bundle.module.url(forResource: "markdown-it-sub.min", withExtension: "js", subdirectory: "js"),
-                // let markdownItSubJS = try? String(contentsOf: markdownItSubJSURL),
-                // let markdownItSupJSURL = Bundle.module.url(forResource: "markdown-it-sup.min", withExtension: "js", subdirectory: "js"),
-                // let markdownItSupJS = try? String(contentsOf: markdownItSupJSURL),
-                // let markdownItFootnoteJSURL = Bundle.module.url(forResource: "markdown-it-footnote.min", withExtension: "js", subdirectory: "js"),
                 // let markdownItFootnoteJS = try? String(contentsOf: markdownItFootnoteJSURL)
                 else {
                     print("Failed to load resources.")
                     return
                 }
 
-                let htmlString = templateString
-                    .replacingOccurrences(of: "PLACEHOLDER_SCRIPT", with: script)
-                    .replacingOccurrences(of: "PLACEHOLDER_STYLESHEET", with: self.parent.customStylesheet ?? defaultStylesheet)
-                    .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_CSS", with: markdownCSS)
-                // .replacingOccurrences(of: "PLACEHOLDER_KATEX_CSS", with: "<style>\(katexCSS)</style>")
-                // .replacingOccurrences(of: "PLACEHOLDER_TEXMATH_CSS", with: "<style>\(texmathCSS)</style>")
-                // .replacingOccurrences(of: "PLACEHOLDER_KATEX_JS", with: "<script>\(katexJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_TEXMATH_JS", with: "<script>\(texmathJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_MORPHDOM_JS", with: "<script>\(morphdomJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_CLIPBOARD_JS", with: "<script>\(clipboardJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_SUB_JS", with: "<script>\(markdownItSubJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_SUP_JS", with: "<script>\(markdownItSupJS)</script>")
-                // .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_IT_FOOTNOTE_JS", with: "<script>\(markdownItFootnoteJS)</script>")
+                // let htmlString = templateString
+                //     .replacingOccurrences(of: "PLACEHOLDER_SCRIPT", with: script)
+                //     .replacingOccurrences(of: "PLACEHOLDER_STYLESHEET", with: self.parent.customStylesheet ?? defaultStylesheet)
+                //     .replacingOccurrences(of: "PLACEHOLDER_MARKDOWN_CSS", with: markdownCSS)
+
+                let htmlString = script
 
                 platformView.loadHTMLString(htmlString, baseURL: nil)
             }

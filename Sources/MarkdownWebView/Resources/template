@@ -202,10 +202,10 @@
                 }
             });
 
-            // // send the html contnent via POST to https://webhook.site/9251dc8e-fc67-4e37-8a72-50129affd04e for debug
-            // fetch('https://webhook.site/9251dc8e-fc67-4e37-8a72-50129affd04e', {
+            // send the html contnent via POST to https://webhook.site/ for debug
+            // fetch('https://webhook.site/127d428d-4c13-46a7-a2ec-73ff706b0433', {
             //     method: 'POST',
-            //     body: markdownRenderedElement.innerHTML
+            //     body: document.documentElement.outerHTML
             // });
 
             window.webkit.messageHandlers.renderedContentHandler.postMessage(markdownContentBase64Encoded);
